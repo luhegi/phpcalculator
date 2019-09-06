@@ -7,16 +7,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Add command.
+ * Substract command.
  */
-class AddCommand extends Command {
+class SubstractCommand extends Command {
     /**
      * Configure command, set parameters definition.
      */
     protected function configure() {
-        $this->setName('add')
-            ->setDescription('Add all given Numbers.')
-            ->addArgument('numbers', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The numbers to be added');
+        $this->setName('substract')
+            ->setDescription('Substract all given Numbers.')
+            ->addArgument('numbers', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'The numbers to be substracted');
     }
     /**
      * Sum the numbers.
@@ -26,8 +26,8 @@ class AddCommand extends Command {
         $result = (int)$arr[0];
         $text = $arr[0];
         for($x = 1; $x < count($arr); $x++){
-            $result += (int)$arr[$x];
-            $text .= " + ". $arr[$x];
+            $result -= (int)$arr[$x];
+            $text .= " - ". $arr[$x];
         }
         $text .= " = ";
         $output->writeln($text . $result);
