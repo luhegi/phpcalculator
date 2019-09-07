@@ -1,15 +1,15 @@
 <?php
 namespace Jakmall\Recruitment\Calculator\Commands;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Jakmall\Recruitment\Calculator\Commands\Utility;
 
 /**
  * Pow command.
  */
-class PowCommand extends Utility {
+class PowCommand extends Command {
     /**
      * Configure command, set parameters definition.
      */
@@ -28,7 +28,18 @@ class PowCommand extends Utility {
 
         $textoutput = $text ." = ";
 
-        $this->addHistory('pow', $text, $result, $textoutput . $result);
+        $json = new \stdClass();
+        $json->command = "pow";
+        $json->description = $text;
+        $json->result = $result;
+        $json->output = $textoutput . $result;
+        $json->time = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+        $get_current = file_get_contents('history.json');
+        $tempArray = json_decode($get_current);
+        array_push($tempArray, $json);
+        $jsonData = json_encode($tempArray);
+        file_put_contents('history.json', $jsonData);
 
         $output->writeln($textoutput . $result);
     }

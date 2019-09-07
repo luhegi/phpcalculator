@@ -1,15 +1,15 @@
 <?php
 namespace Jakmall\Recruitment\Calculator\Commands;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Jakmall\Recruitment\Calculator\Commands\Utility;
 
 /**
  * Divide command.
  */
-class DivideCommand extends Utility {
+class DivideCommand extends Command {
     /**
      * Configure command, set parameters definition.
      */
@@ -22,6 +22,28 @@ class DivideCommand extends Utility {
      * Sum the numbers.
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->operation($input, $output, 'divide');
+        $arr = $input->getArgument('numbers');
+        $result = (int)$arr[0];
+        $text = $arr[0];
+        for($x = 1; $x < count($arr); $x++){
+            $result /= (int)$arr[$x];
+            $text .= " / ". $arr[$x];
+        }
+        $textoutput = $text ." = ";
+
+        $json = new \stdClass();
+        $json->command = "divide";
+        $json->description = $text;
+        $json->result = $result;
+        $json->output = $textoutput . $result;
+        $json->time = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+        $get_current = file_get_contents('history.json');
+        $tempArray = json_decode($get_current);
+        array_push($tempArray, $json);
+        $jsonData = json_encode($tempArray);
+        file_put_contents('history.json', $jsonData);
+
+        $output->writeln($textoutput . $result);
     }
 }
