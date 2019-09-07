@@ -29,7 +29,21 @@ class AddCommand extends Command {
             $result += (int)$arr[$x];
             $text .= " + ". $arr[$x];
         }
-        $text .= " = ";
-        $output->writeln($text . $result);
+        $textoutput = $text ." = ";
+
+        $json = new \stdClass();
+        $json->command = "add";
+        $json->description = $text;
+        $json->result = $result;
+        $json->output = $textoutput . $result;
+        $json->time = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+        $get_current = file_get_contents('history.json');
+        $tempArray = json_decode($get_current);
+        array_push($tempArray, $json);
+        $jsonData = json_encode($tempArray);
+        file_put_contents('history.json', $jsonData);
+
+        $output->writeln($textoutput . $result);
     }
 }

@@ -24,7 +24,23 @@ class PowCommand extends Command {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $result = pow( $input->getArgument('base'), $input->getArgument('exp') );
-        $text = $input->getArgument('base') ." ^ ". $input->getArgument('exp') ." = ";
-        $output->writeln($text . $result);
+        $text = $input->getArgument('base') ." ^ ". $input->getArgument('exp');
+
+        $textoutput = $text ." = ";
+
+        $json = new \stdClass();
+        $json->command = "pow";
+        $json->description = $text;
+        $json->result = $result;
+        $json->output = $textoutput . $result;
+        $json->time = \Carbon\Carbon::now()->format('Y-m-d H:i:s');
+
+        $get_current = file_get_contents('history.json');
+        $tempArray = json_decode($get_current);
+        array_push($tempArray, $json);
+        $jsonData = json_encode($tempArray);
+        file_put_contents('history.json', $jsonData);
+
+        $output->writeln($textoutput . $result);
     }
 }
